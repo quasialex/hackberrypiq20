@@ -14,10 +14,6 @@
 #define MAX17048_SOC_REG 0x04
 #define MAX17048_CRATE_REG 0x16
 
-#define VOLTAGE_BUFFER_SIZE 10
-#define VOLTAGE_CHANGE_THRESHOLD 3
-#define STATUS_STABLE_COUNT 3
-
 static const struct regmap_config max17048_regmap_cfg = {
 	.reg_bits = 8,
 	.val_bits = 16,
@@ -46,15 +42,7 @@ static uint32_t max17048_get_soc(struct max17048 *battery)
 	regmap_read(battery->regmap, MAX17048_SOC_REG, &soc);
 	return (soc / 256);
 }
-#if 0
-static int32_t max17048_get_crate(struct max17048 *battery)
-{
-        uint32_t crate_raw = 0;
-        regmap_read(battery->regmap, MAX17048_CRATE_REG, &crate_raw);
-	int32_t crate = (int16_t)(crate_raw & 0xFFFF);
-        return crate * 208 / 1000;
-}
-#endif
+
 static int max17048_get_property(struct power_supply *psy,
 				 enum power_supply_property psp,
 				 union power_supply_propval *val)
@@ -74,16 +62,6 @@ static int max17048_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
 		val->intval = battery->battery_capacity * 1000;
 		break;
-#if 0
-	case POWER_SUPPLY_PROP_STATUS:
-		val->intval = (max17048_get_crate(battery) > 0) ?
-				      POWER_SUPPLY_STATUS_CHARGING :
-				      POWER_SUPPLY_STATUS_DISCHARGING;
-		break;
-	case POWER_SUPPLY_PROP_CURRENT_NOW:
-		val->intval = max17048_get_crate(battery) * battery->battery_capacity * 100;
-		break;
-#endif
 	default:
 		return -EINVAL;
 	}
@@ -93,9 +71,6 @@ static int max17048_get_property(struct power_supply *psy,
 static enum power_supply_property max17048_battery_props[] = {
 	POWER_SUPPLY_PROP_VOLTAGE_NOW, POWER_SUPPLY_PROP_CAPACITY,
 	POWER_SUPPLY_PROP_CHARGE_FULL, POWER_SUPPLY_PROP_CHARGE_NOW,
-#if 0
-	POWER_SUPPLY_PROP_STATUS,      POWER_SUPPLY_PROP_CURRENT_NOW
-#endif
 };
 
 static const struct power_supply_desc max17048_battery_desc = {
