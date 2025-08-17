@@ -70,12 +70,19 @@ sudo apt purge plasma-discover*
    Disable blur, wobbly windows, animations:
 
 ```bash
+# Disable translucency & animations
 kwriteconfig6 --file kwinrc --group Compositing --key Enabled true
 kwriteconfig6 --file kwinrc --group Compositing --key OpenGLIsUnsafe true
 kwriteconfig6 --file kwinrc --group Compositing --key Backend "wayland"
 kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key wobblywindowsEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key windowviewEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key overviewEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key taskbarThumbnailsEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key translucencyEnabled false
+
 qdbus6 org.kde.KWin /KWin reconfigure
+
 ```
 
 5. **Autologin**
@@ -103,7 +110,7 @@ Session=plasma
 Remove heavy apps you don’t need:
 
 ```bash
-sudo apt purge konqueror kaddressbook kmail akregator kontact
+sudo apt purge konqueror kaddressbook kmail akregator kontact kdeconnect plasma-discover akonadi-server kdepim-runtime korganizer
 sudo apt autoremove --purge
 ```
 
