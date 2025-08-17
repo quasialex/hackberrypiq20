@@ -1,3 +1,5 @@
+## Kali with KDE on Wayland (gesture support for touch)
+
 ```bash
 sudo apt update
 sudo apt install --no-install-recommends \
