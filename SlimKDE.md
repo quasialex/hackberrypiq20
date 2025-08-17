@@ -235,4 +235,101 @@ sudo apt purge tlp
 
    Temps > 75–80 °C → expect Wi-Fi issues.
 
+---
+
+## 🔹 1. Why `cpupower` still errors
+
+You ran:
+
+```bash
+sudo cpupower frequency-set -g schedutil
+```
+Got it 👍 That error usually means **systemd choked on the inline bash heredoc**.
+Let’s fix it cleanly.
+
+---
+
+### 1. Fix the unit file
+
+Edit the service with:
+
+```bash
+sudo vim /etc/systemd/system/cpufreq-tune.service
+```
+/etc/systemd/system/cpufreq-tune.service
+
+Replace contents with:
+
+```ini
+[Unit]
+Description=Custom CPU frequency scaling with schedutil
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/cpufreq-tune.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+---
+
+### 2. Add the script
+
+Now create the script we call from ExecStart:
+
+```bash
+sudo tee /usr/local/bin/cpufreq-tune.sh > /dev/null <<'EOF'
+#!/bin/bash
+for cpu in /sys/devices/system/cpu/cpu[0-9]*; do
+  echo schedutil > $cpu/cpufreq/scaling_governor
+  echo 1500000 > $cpu/cpufreq/scaling_min_freq
+  echo 2400000 > $cpu/cpufreq/scaling_max_freq
+done
+EOF
+
+```
+
+Make it executable:
+
+```bash
+sudo chmod +x /usr/local/bin/cpufreq-tune.sh
+```
+
+---
+
+### 3. Reload + run
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now cpufreq-tune.service
+```
+
+---
+
+### 4. Verify
+
+```bash
+systemctl status cpufreq-tune.service
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+```
+
+```
+
+---
+
+## 🔹 2. About thermal trip points
+
+✅ If Wi-Fi dies at \~65–70 °C, you should actually **lower** that trip point.
+For example:
+
+```bash
+echo 65000 | sudo tee /sys/class/thermal/thermal_zone0/trip_point_3_temp
+```
+
+This makes the CPU throttle earlier → keeping the SoC cooler → Wi-Fi stays stable.
+
+---
 
