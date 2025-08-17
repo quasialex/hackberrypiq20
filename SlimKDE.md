@@ -170,9 +170,69 @@ sudo apt purge tlp
 
 ```
 
-## 🔹 Result
+## 🔎 Possible Causes of Wi-Fi Drops
 
-* **Boot speed**: much faster (no plymouth, no extra services).
-* **Idle RAM**: \~600–800 MB.
-* **Gestures**: native in Plasma 6 Wayland.
-* **Battery/heat**: lighter than GNOME, close to XFCE but modern.
+1. **Thermal throttling of the SoC**
+
+   * The onboard Wi-Fi chip sits near the SoC; when it overheats, the kernel driver resets the radio.
+   * You can check logs with:
+
+     ```bash
+     dmesg -w | grep -i wifi
+     journalctl -f | grep -i wpa
+     ```
+
+2. **Power saving cutting the Wi-Fi**
+
+   * By default, NetworkManager and some drivers enable power save aggressively.
+   * Run:
+
+     ```bash
+     iw dev wlan0 get power_save
+     ```
+
+     If it says `on`, try disabling it:
+
+     ```bash
+     sudo iw dev wlan0 set power_save off
+     ```
+
+3. **Driver instability on Wayland/KDE**
+
+   * Less likely, but some Realtek/MediaTek drivers are flaky under load.
+
+---
+
+## 🛠 Fixes to Try
+
+1. **Force disable Wi-Fi powersave permanently**
+
+   ```bash
+   sudo mkdir -p /etc/NetworkManager/conf.d
+   sudo tee /etc/NetworkManager/conf.d/wifi-powersave.conf <<'EOF'
+   [connection]
+   wifi.powersave = 2
+   EOF
+   sudo systemctl restart NetworkManager
+   ```
+
+2. **Improve cooling**
+
+   * Ensure your heatsink actually touches the SoC with good thermal paste.
+   * If you can, undervolt or cap CPU freq slightly:
+
+     ```bash
+     sudo cpupower frequency-set -u 1.8GHz
+     ```
+
+     (drops heat dramatically, Wi-Fi stays stable).
+
+3. **Watch temps live**
+
+   ```bash
+   watch -n 1 "cat /sys/class/thermal/thermal_zone*/temp"
+   ```
+
+   Temps > 75–80 °C → expect Wi-Fi issues.
+
+
