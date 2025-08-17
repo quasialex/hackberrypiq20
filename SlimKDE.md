@@ -315,9 +315,6 @@ sudo systemctl enable --now cpufreq-tune.service
 systemctl status cpufreq-tune.service
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 ```
-
-```
-
 ---
 
 ## 🔹 2. About thermal trip points
