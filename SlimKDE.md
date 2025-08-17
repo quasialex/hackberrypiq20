@@ -331,5 +331,113 @@ echo 65000 | sudo tee /sys/class/thermal/thermal_zone0/trip_point_3_temp
 
 This makes the CPU throttle earlier → keeping the SoC cooler → Wi-Fi stays stable.
 
+
+Perfect 👍 Let’s build a **thermal-aware governor** for your CM5.
+It will:
+
+* Run in the background as a lightweight service.
+* Check SoC temperature every few seconds.
+* If temp ≥ **70 °C** → lower max clock to `1.8GHz`.
+* If temp ≤ **65 °C** → restore full max clock (`2.4GHz`).
+* Keep governor as `schedutil`.
+
+---
+
+### 1. Script
+
+Save as `/usr/local/bin/cpu-thermal-guard.sh`:
+
+```bash
+#!/bin/bash
+# CPU Thermal Guard for CM5
+# Drops CPU max freq if temp >= 70°C, restores if <= 65°C
+
+# Freqs (kHz)
+FREQ_NORMAL=2400000
+FREQ_COOL=1800000
+FREQ_MIN=1500000
+
+# Paths
+CPU_PATH="/sys/devices/system/cpu"
+THERMAL_ZONE="/sys/class/thermal/thermal_zone0/temp"
+
+# Make sure we’re on schedutil
+for cpu in ${CPU_PATH}/cpu[0-9]*; do
+    echo schedutil > "$cpu/cpufreq/scaling_governor" 2>/dev/null
+done
+
+while true; do
+    temp=$(<"$THERMAL_ZONE")
+    # Convert to °C
+    temp=$((temp/1000))
+
+    if (( temp >= 70 )); then
+        # Too hot → cap freq
+        for cpu in ${CPU_PATH}/cpu[0-9]*; do
+            echo $FREQ_COOL > "$cpu/cpufreq/scaling_max_freq" 2>/dev/null
+            echo $FREQ_MIN  > "$cpu/cpufreq/scaling_min_freq" 2>/dev/null
+        done
+    elif (( temp <= 65 )); then
+        # Cool enough → restore
+        for cpu in ${CPU_PATH}/cpu[0-9]*; do
+            echo $FREQ_NORMAL > "$cpu/cpufreq/scaling_max_freq" 2>/dev/null
+            echo $FREQ_MIN    > "$cpu/cpufreq/scaling_min_freq" 2>/dev/null
+        done
+    fi
+
+    sleep 5
+done
+```
+
+```bash
+sudo chmod +x /usr/local/bin/cpu-thermal-guard.sh
+```
+
+---
+
+### 2. Systemd service
+
+Create `/etc/systemd/system/cpu-thermal-guard.service`:
+
+```ini
+[Unit]
+Description=CPU Thermal Guard for CM5
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/local/bin/cpu-thermal-guard.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start:
+
+```bash
+sudo systemctl enable --now cpu-thermal-guard.service
+```
+
+---
+
+### 3. Verify
+
+Check status:
+
+```bash
+systemctl status cpu-thermal-guard.service
+```
+
+Monitor temps and scaling:
+
+```bash
+watch -n2 "cat /sys/class/thermal/thermal_zone0/temp /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
+```
+
+---
+
+This way, you’re always on **schedutil** for responsiveness, but the system will **self-throttle gracefully** if heat starts killing Wi-Fi or battery life.
+
 ---
 
