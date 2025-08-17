@@ -80,6 +80,10 @@ kwriteconfig6 --file kwinrc --group Plugins --key windowviewEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key overviewEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key taskbarThumbnailsEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key translucencyEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_scaleEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_slidingpopupsEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_dialogparentEnabled false
+
 
 qdbus6 org.kde.KWin /KWin reconfigure
 
@@ -138,6 +142,33 @@ Then trim the bloat as I listed before.
 👉 Do you want me to build you a **single-script setup** (install + purge + disable baloo, etc.) so you just run it once after a fresh image and have a clean KDE environment?
 
 ---
+```
+sudo tee /etc/systemd/system/cpupower.service <<'EOF'
+[Unit]
+Description=Set CPU frequency governor
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/cpupower frequency-set -g schedutil
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reexec
+sudo systemctl enable --now cpupower.service
+
+
+systemctl disable --now cups.service avahi-daemon.service ModemManager.service
+sudo systemctl disable NetworkManager-wait-online.service
+sudo systemctl mask NetworkManager-wait-online.service
+sudo systemctl disable networking.service ifupdown-pre.service
+sudo systemctl disable tlp.service
+sudo apt purge tlp
+
+```
 
 ## 🔹 Result
 
