@@ -107,6 +107,29 @@ sudo apt purge konqueror kaddressbook kmail akregator kontact
 sudo apt autoremove --purge
 ```
 
+You'll also need:
+
+```bash
+sudo apt install powerdevil
+```
+
+That will give you:
+
+* the daemon (`powerdevil`)
+* its config module (shows up in KDE System Settings → Power Management)
+
+---
+
+⚡ To recap, after re-imaging + KDE minimal, you’ll want:
+
+```bash
+sudo apt install powerdevil plasma-nm plasma-pa konsole dolphin kde-spectacle
+```
+
+Then trim the bloat as I listed before.
+
+👉 Do you want me to build you a **single-script setup** (install + purge + disable baloo, etc.) so you just run it once after a fresh image and have a clean KDE environment?
+
 ---
 
 ## 🔹 Result
