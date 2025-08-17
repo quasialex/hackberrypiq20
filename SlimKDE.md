@@ -45,7 +45,7 @@ Now we cut the overhead:
 1. **Disable Baloo (indexer/search)**
 
 ```bash
-balooctl disable
+balooctl6 disable
 ```
 
 Optional, also mask:
