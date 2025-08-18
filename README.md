@@ -160,9 +160,9 @@ i2c i2c-13: new_device: Instantiated device max17040 at 0x36
 
 ```bash
 sudo apt install make linux-headers-rpi-2712
-git clone https://github.com/quasialex/hackberrypiq20 --depth 1
-cd hackberrypiq20
-make && sudo make install
+git clone https://github.com/quasialex/hackberrycm5 --depth 1
+cd hackberrycm5
+make modules && sudo make install
 ```
 
 If your kernel already has the out-of-tree module installed (you saw this):
