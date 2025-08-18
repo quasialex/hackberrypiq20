@@ -96,7 +96,7 @@ Enable weekly TRIM (no continuous mount-time discard):
 sudo systemctl enable --now fstrim.timer
 ```
 
-Reboot later to apply cmdline/initramfs changes; for now continue.
+Reboot later to apply cmdline/initramfs changes; for now, continue.
 
 ---
 
@@ -164,12 +164,7 @@ git clone https://github.com/quasialex/hackberrypiq20 --depth 1
 cd hackberrypiq20
 make && sudo make install
 ```
-The install creates a `dtoverlay=hackberrypicm5` entry in `/boot/firmware/config.txt` which should be removed as it disables the touchscreen.
 
-To remove
-```bash
-sudo make remove
-```
 If your kernel already has the out-of-tree module installed (you saw this):
 
 * `hackberrypi_max17048` present (and `regmap_i2c`, `industrialio`)
