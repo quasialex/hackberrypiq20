@@ -166,6 +166,10 @@ make && sudo make install
 ```
 The install creates a `dtoverlay=hackberrypicm5` entry in `/boot/firmware/config.txt` which should be removed as it disables the touchscreen.
 
+To remove
+```bash
+sudo make remove
+```
 If your kernel already has the out-of-tree module installed (you saw this):
 
 * `hackberrypi_max17048` present (and `regmap_i2c`, `industrialio`)
