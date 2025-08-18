@@ -97,6 +97,38 @@ kwriteconfig6 --file kwinrc --group Compositing --key UseCompositing true
 kwriteconfig6 --file kwinrc --group Compositing --key AllowTearing true
 kwriteconfig6 --file kwinrc --group Compositing --key LatencyPolicy "PreferLowerLatency"
 
+# Desktop cube & fancy switching
+kwriteconfig6 --file kwinrc --group Plugins --key cubeEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key cubeSlideEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key flipswitchEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key coverswitchEnabled false
+
+# Dim/animations
+kwriteconfig6 --file kwinrc --group Plugins --key dimscreenEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key fadeEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key slideEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key scaleEnabled false
+
+# Screen edge stuff
+kwriteconfig6 --file kwinrc --group Plugins --key slidebackEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key slideEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_maximizeEnabled false
+
+# Login/logout fade
+kwriteconfig6 --file kwinrc --group Plugins --key loginEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key logoutEnabled false
+
+# Disable tooltips (hover previews)
+kwriteconfig6 --file plasmarc --group PlasmaToolTips --key Delay 0
+kwriteconfig6 --file plasmarc --group PlasmaToolTips --key ShowToolTips false
+
+# Disable animations globally
+kwriteconfig6 --file kdeglobals --group KScreen --key AnimationDurationFactor 0
+
+# Disable background blur in panels
+kwriteconfig6 --file kwinrc --group Plugins --key backgroundcontrastEnabled false
+
+
 
 # Tell KWin to reload settings
 qdbus6 org.kde.KWin /KWin reconfigure || true
