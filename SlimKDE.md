@@ -92,6 +92,12 @@ kwriteconfig6 --file kwinrc --group Plugins --key translucencyEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_slidingpopupsEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_dialogparentEnabled false
 
+kwriteconfig6 --file kwinrc --group Compositing --key Enabled true
+kwriteconfig6 --file kwinrc --group Compositing --key UseCompositing true
+kwriteconfig6 --file kwinrc --group Compositing --key AllowTearing true
+kwriteconfig6 --file kwinrc --group Compositing --key LatencyPolicy "PreferLowerLatency"
+
+
 # Tell KWin to reload settings
 qdbus6 org.kde.KWin /KWin reconfigure || true
 ```
