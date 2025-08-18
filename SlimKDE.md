@@ -148,13 +148,6 @@ kwriteconfig6 --file plasmarc --group PlasmaToolTips --key Duration 0
 
 kwriteconfig6 --file kdeglobals --group KDE --key AnimationDurationFactor 0
 
-# Remove startup daemons you don’t need
-
-systemctl --user mask plasma-discover-notifier.service
-systemctl --user mask plasma-kpackage.service
-systemctl --user mask plasma-krunner.service
-systemctl --user mask plasma-kactivitymanagerd.service
-
 # Tell KWin to reload settings
 qdbus6 org.kde.KWin /KWin reconfigure || true
 ```
