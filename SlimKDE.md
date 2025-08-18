@@ -83,6 +83,8 @@ kwriteconfig6 --file kwinrc --group Plugins --key translucencyEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_scaleEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_slidingpopupsEnabled false
 kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_dialogparentEnabled false
+kwriteconfig6 --file kscreenlockerrc --group Daemon --key Autolock false
+kwriteconfig6 --file kscreenlockerrc --group Daemon --key LockOnResume false
 
 
 qdbus6 org.kde.KWin /KWin reconfigure
@@ -134,7 +136,7 @@ That will give you:
 ⚡ To recap, after re-imaging + KDE minimal, you’ll want:
 
 ```bash
-sudo apt install powerdevil plasma-nm plasma-pa konsole dolphin kde-spectacle
+sudo apt install power-profiles-daemon plasma-nm plasma-pa konsole dolphin kde-spectacle
 ```
 
 Then trim the bloat as I listed before.
