@@ -128,7 +128,32 @@ kwriteconfig6 --file kdeglobals --group KScreen --key AnimationDurationFactor 0
 # Disable background blur in panels
 kwriteconfig6 --file kwinrc --group Plugins --key backgroundcontrastEnabled false
 
+# Disable desktop grid & workspace animations
 
+kwriteconfig6 --file kwinrc --group Plugins --key desktopgridEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key presentwindowsEnabled false
+
+# Disable panel/taskbar transparency & blur
+
+kwriteconfig6 --file kwinrc --group Plugins --key backgroundcontrastEnabled false
+kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled false
+
+# Disable tooltips + previews completely
+
+kwriteconfig6 --file plasmarc --group PlasmaToolTips --key ShowToolTips false
+kwriteconfig6 --file plasmarc --group PlasmaToolTips --key Delay 0
+kwriteconfig6 --file plasmarc --group PlasmaToolTips --key Duration 0
+
+# Turn off animations globally
+
+kwriteconfig6 --file kdeglobals --group KDE --key AnimationDurationFactor 0
+
+# Remove startup daemons you don’t need
+
+systemctl --user mask plasma-discover-notifier.service
+systemctl --user mask plasma-kpackage.service
+systemctl --user mask plasma-krunner.service
+systemctl --user mask plasma-kactivitymanagerd.service
 
 # Tell KWin to reload settings
 qdbus6 org.kde.KWin /KWin reconfigure || true
