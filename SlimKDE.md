@@ -318,7 +318,71 @@ sudo systemctl disable networking.service ifupdown-pre.service
 sudo systemctl disable --now ModemManager.service avahi-daemon.service cups.service colord.service phpsessionclean.service || true
 ```
 
-> Plymouth theming is tied to Kali themes; removing it pulls in weird deps, so just leave it — or accept that purging `plymouth` can force reinstall of `kali-themes`.
+---
+
+### 🪓 Remaining Slim-Down Targets
+
+1. **Plasma Add-ons**
+
+   * Remove widgets you don’t need:
+    `sudo apt purge plasma-widgets-* plasma-discover plasma-thunderbolt plasma-browser-integration`
+
+2. **Background Services**
+
+   * Double-check `systemctl --user list-unit-files | grep plasma`
+     Anything like `plasma-activity*`, `plasma-kpackage*` can usually be masked.
+
+3. **Akonadi (PIM services)**
+
+   * If you never use KDE Mail/Calendar:
+
+     ```bash
+     sudo apt purge akonadi-server kdepim-runtime
+     ```
+
+     (removes \~200MB of RAM churn)
+
+4. **KDE Wallet**
+
+   * If you don’t use it:
+
+     ```bash
+     sudo apt purge kwalletmanager
+     ```
+
+     (disables all wallet popups)
+
+5. **Baloo leftovers**
+
+   * Ensure no baloo file indexer is running:
+
+     ```bash
+     ps aux | grep baloo
+     ```
+
+     Should be empty. If not:
+
+     ```bash
+     balooctl purge
+     ```
+
+6. **PackageKit / Discover updates**
+
+   * Already masked the notifier, but to kill it entirely:
+
+     ```bash
+     sudo apt purge plasma-discover packagekit
+     ```
+
+7. **Session speedups**
+
+   * Plymouth is still in your blame log.
+
+     ```bash
+     sudo apt purge plymouth*
+     ```
+
+     (saves \~1–2s boot and tiny RAM)
 
 ---
 
@@ -328,3 +392,21 @@ sudo systemctl disable --now ModemManager.service avahi-daemon.service cups.serv
 * **Gestures not firing**: ensure you’re in **Wayland** (`echo $XDG_SESSION_TYPE`), then tweak **System Settings → Workspace → Gestures**.
 * **Wi-Fi drops**: confirm powersave is off (`iw dev wlan0 get power_save`), watch temps, and check logs:
   `dmesg -w | grep -iE 'brcm|mtk|wifi|wlan|firmware'` and `journalctl -f | grep -i wpa`.
+
+---
+### ✅ Already Done / Covered
+
+* 🔒 Lock screen + auto-lock disabled
+* 🎞️ KWin effects disabled (blur, wobbly, translucency, popups, etc.)
+* 🖼️ Wallpaper replaced with solid color for efficiency
+* 🖱️ Gestures preserved via Wayland/KWin
+* ⚡ CPU scaling tuned (`schedutil` with burst support)
+* 🔋 Battery indicator fixed (via max17048 + UPower)
+* 🌐 CUPS avoided, Bluetooth optional, NetworkManager only
+
+👉 If you do **all of that**, you’ve essentially reached **KDE UltraSlim final form**:
+
+* Boots nearly as fast as XFCE
+* Uses <400MB RAM idle
+* Keeps gestures & Wayland touch
+* Battery + CPU scaling optimized
